@@ -1,6 +1,6 @@
-PROJ_PATH = $(GOPATH)/src/github.com/aaronflower/dzone-shipping
+PROJ_PATH = $(GOPATH)/src/github.com/aaronflower/shippy-service-user
 build:
-	protoc -I. --go_out=plugins=micro:$(PROJ_PATH)/service.user proto/user/user.proto
+	protoc -I. --go_out=plugins=micro:$(PROJ_PATH) proto/auth/auth.proto
 	GOOS=linux GOARCH=amd64 go build -o service.user
 	docker build --rm -t service.user .
 

@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 
-	pb "github.com/aaronflower/dzone-shipping/service.user/proto/user"
+	pb "github.com/aaronflower/shippy-service-user/proto/auth"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -54,6 +55,8 @@ func (s *service) Auth(ctx context.Context, req *pb.User, res *pb.Token) error {
 }
 
 func (s *service) Create(ctx context.Context, req *pb.User, res *pb.Response) error {
+	log.Println("Creating user: ", req)
+
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatal(err)
@@ -69,5 +72,16 @@ func (s *service) Create(ctx context.Context, req *pb.User, res *pb.Response) er
 }
 
 func (s *service) ValidateToken(ctx context.Context, req *pb.Token, res *pb.Token) error {
+	// Decode token
+	claims, err := s.tokenServcie.Decode(req.Token)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	if claims.User.Id == "" {
+		return errors.New("invalid user")
+	}
+	res.Valid = true
 	return nil
 }
