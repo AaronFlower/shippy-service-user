@@ -6,12 +6,14 @@ import (
 	"log"
 
 	pb "github.com/aaronflower/shippy-service-user/proto/auth"
+	micro "github.com/micro/go-micro"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type service struct {
 	repo         Repository
 	tokenServcie Authable
+	Publisher    micro.Publisher
 }
 
 func (s *service) Get(ctx context.Context, req *pb.User, res *pb.Response) error {
@@ -68,6 +70,12 @@ func (s *service) Create(ctx context.Context, req *pb.User, res *pb.Response) er
 		return err
 	}
 	res.User = req
+
+	// Let's publish the event once we create a new user.
+	if err := s.Publisher.Publish(ctx, req); err != nil {
+		log.Println("Publish failed:", err)
+		return err
+	}
 	return nil
 }
 
