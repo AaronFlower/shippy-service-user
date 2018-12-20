@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/aaronflower/dzone-shipping/service.user/proto/user"
+	pb "github.com/aaronflower/shippy-service-user/proto/auth"
 	micro "github.com/micro/go-micro"
 )
 
@@ -32,7 +32,7 @@ func main() {
 
 	srv.Init()
 
-	pb.RegisterUserServiceHandler(srv.Server(), &service{repo, tokenService})
+	pb.RegisterAuthHandler(srv.Server(), &service{repo, tokenService})
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)

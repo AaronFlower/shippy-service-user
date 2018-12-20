@@ -16,3 +16,4 @@ run:
 	
 clean:
 	go clean
+	rm service.user

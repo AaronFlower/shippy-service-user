@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
 	"time"
 
-	pb "github.com/aaronflower/dzone-shipping/service.user/proto/user"
+	pb "github.com/aaronflower/shippy-service-user/proto/auth"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -33,12 +34,17 @@ type TokenService struct {
 func (s *TokenService) Decode(token string) (*CustomClaims, error) {
 	// Parse the token
 	tokenType, err := jwt.ParseWithClaims(
-		string(key),
+		token,
 		&CustomClaims{},
 		func(token *jwt.Token) (interface{}, error) {
 			return key, nil
 		},
 	)
+
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
 
 	// Validate the token and return the custom claims
 	if claims, ok := tokenType.Claims.(*CustomClaims); ok && tokenType.Valid {
@@ -61,6 +67,11 @@ func (s *TokenService) Encode(user *pb.User) (string, error) {
 
 	// Create token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	// Sign token and return
-	return token.SignedString(key)
+	str, err := token.SignedString(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return str, nil
 }
