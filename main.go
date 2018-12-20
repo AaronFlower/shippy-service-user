@@ -6,6 +6,7 @@ import (
 
 	pb "github.com/aaronflower/shippy-service-user/proto/auth"
 	micro "github.com/micro/go-micro"
+	_ "github.com/micro/go-plugins/registry/mdns"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 
 	// Create a new service. Optionally include some options here.
 	srv := micro.NewService(
-		micro.Name("go.micro.srv.user"),
+		micro.Name("shippy.auth"),
 		micro.Version("latest"),
 	)
 

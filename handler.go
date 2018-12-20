@@ -38,6 +38,10 @@ func (s *service) Auth(ctx context.Context, req *pb.User, res *pb.Token) error {
 	log.Println("Logging in with:", req.Email, req.Password)
 
 	user, err := s.repo.GetByEmail(req.Email)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	log.Println(user)
 	log.Println(user.Password, req.Password)
 
@@ -67,6 +71,7 @@ func (s *service) Create(ctx context.Context, req *pb.User, res *pb.Response) er
 
 	req.Password = string(hashedPass)
 	if err := s.repo.Create(req); err != nil {
+		log.Println(err)
 		return err
 	}
 	res.User = req
